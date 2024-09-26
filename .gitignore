@@ -1,0 +1,11 @@
+# Ignore environment variables
+.env
+
+# Ignore Docker logs
+fs/volumes/clickhouse/ch_logs/
+
+# Ignore ClickHouse data
+fs/volumes/clickhouse/ch_data/
+
+# Ignore any shell scripts if not needed
+fs/volumes/clickhouse/docker-entrypoint-initdb.d/*.sh

@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  clickhouse:
+    image: 'clickhouse/clickhouse-server:${CHVER:-latest}'
+    container_name: clickhouse
+    hostname: clickhouse
+    volumes:
+      - ./fs/volumes/clickhouse/etc/clickhouse-server/config.d:/etc/clickhouse-server/config.d
+      - ./fs/volumes/clickhouse/etc/clickhouse-server/users.d:/etc/clickhouse-server/users.d
+      - ./fs/volumes/clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./fs/volumes/clickhouse/ch_data:/var/lib/clickhouse  
+      - ./fs/volumes/clickhouse/ch_logs:/var/log/clickhouse
+    env_file:
+      - .env
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    depends_on:
+      - clickhouse-keeper
+    entrypoint: >
+      sh -c "chmod +x /docker-entrypoint-initdb.d/*.sh &&
+             /entrypoint.sh"
+  clickhouse-keeper:
+    image: 'clickhouse/clickhouse-keeper:${CHKVER:-latest-alpine}'
+    container_name: clickhouse-keeper
+    hostname: clickhouse-keeper
+    volumes:
+      - ./fs/volumes/clickhouse-keeper/etc/clickhouse-keeper/keeper_config.xml:/etc/clickhouse-keeper/keeper_config.xml
+    ports:
+      - '9181:9181'
